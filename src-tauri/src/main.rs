@@ -11,11 +11,16 @@ mod dir;
 mod log;
 mod menu;
 
+use std::sync::Mutex;
+use tauri::State;
+
 fn main() {
     log::init_log();
     dir::set_app_dir();
+    let main_state = dir::get_app_core_conf("MyApp".to_string(), "2.4.2".to_string());
 
     let app = tauri::Builder::default()
+        .manage(Mutex::new(main_state))
         .invoke_handler(tauri::generate_handler![
             // encrypt_hash
             commands::encrypt_hash::encrypt_string_into_file,

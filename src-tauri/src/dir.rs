@@ -9,7 +9,7 @@ use tauri::utils::assets::EmbeddedAssets;
 
 // use crate::conf;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AppCoreConf {
     // #[serde(rename = "appName")]
     // app_name: String,
@@ -41,23 +41,20 @@ fn get_current_root_dir() -> String {
     "../".to_string()
 }
 
-fn get_context() -> tauri::Context<EmbeddedAssets> {
-    tauri::generate_context!("tauri.conf.json")
-}
+// #[tauri::command]
+// pub fn app_name() -> String {
+//     match &get_context().config().package.product_name {
+//         Some(name) => name.to_string(),
+//         None => "".to_string(),
+//     }
+// }
 
-pub fn app_name() -> String {
-    match &get_context().config().package.product_name {
-        Some(name) => name.to_string(),
-        None => "".to_string(),
-    }
-}
-
-pub fn version() -> String {
-    match &get_context().config().package.version {
-        Some(ver) => ver.to_string(),
-        None => "".to_string(),
-    }
-}
+// pub fn version() -> String {
+//     match &get_context().config().package.version {
+//         Some(ver) => ver.to_string(),
+//         None => "".to_string(),
+//     }
+// }
 
 fn get_document_dir() -> PathBuf {
     let document_dir = match dirs::document_dir() {
@@ -67,10 +64,10 @@ fn get_document_dir() -> PathBuf {
     return document_dir;
 }
 
-pub fn get_app_core_conf() -> AppCoreConf {
+pub fn get_app_core_conf(app_name: String, version: String) -> AppCoreConf {
     let mut document_dir = get_document_dir();
 
-    document_dir.push(app_name());
+    document_dir.push(app_name);
     let data_root_dir = document_dir.to_string_lossy().to_string();
 
     AppCoreConf {
@@ -78,6 +75,6 @@ pub fn get_app_core_conf() -> AppCoreConf {
         data_root_dir,
         path_separator: std::path::MAIN_SEPARATOR_STR.to_owned(),
         // repo: x_conf::PROJECT_REPO.to_string(),
-        version: version(),
+        version: version,
     }
 }

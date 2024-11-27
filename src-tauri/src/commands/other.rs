@@ -1,6 +1,8 @@
 use crate::dir as x_dir;
 use fivim_rs_commands::other as rc;
 use fivim_rs_utils::progress as xu_progress;
+use std::sync::Mutex;
+use tauri::State;
 
 #[tauri::command]
 pub fn log(level: String, content: String) {
@@ -50,6 +52,8 @@ pub fn toml_to_json(content: String) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn get_app_core_conf() -> Result<x_dir::AppCoreConf, String> {
-    Ok(x_dir::get_app_core_conf())
+pub fn get_app_core_conf(
+    state: State<'_, Mutex<x_dir::AppCoreConf>>,
+) -> Result<x_dir::AppCoreConf, String> {
+    Ok(state.lock().unwrap().clone())
 }
